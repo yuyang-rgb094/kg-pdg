@@ -183,12 +183,23 @@ If you use KG-PDG in your research or project, please cite it as follows:
   title  = {KG-PDG: Knowledge Graph Probe-Driven Growth},
   author = {KG-PDG Contributors},
   year   = {2026},
-  url    = {https://github.com/your-org/kg-pdg},
+  url    = {https://github.com/yuyang-rgb094/kg-pdg},
   note   = {An Agent Skill framework for self-growing knowledge graphs.}
 }
 ```
 
 > A full academic paper describing the probe-driven methodology and the 5-round cardiovascular OCT validation is in preparation. This section will be updated upon publication.
+
+---
+
+## Contact
+
+| Channel | Handle |
+|---------|--------|
+| Email | yy18612255323@163.com |
+| WeChat | yy1083124645 |
+
+Feel free to reach out for collaboration, questions, or domain adapter contributions.
 
 ---
 ---
@@ -380,9 +391,20 @@ KG-PDG 源自对心血管知识图谱进行的 5 轮医学 OCT（光学相干断
   title  = {KG-PDG: Knowledge Graph Probe-Driven Growth},
   author = {KG-PDG Contributors},
   year   = {2026},
-  url    = {https://github.com/your-org/kg-pdg},
+  url    = {https://github.com/yuyang-rgb094/kg-pdg},
   note   = {An Agent Skill framework for self-growing knowledge graphs.}
 }
 ```
 
 > 描述探针驱动方法论及 5 轮心血管 OCT 验证的完整学术论文正在撰写中。本文将在论文发表后更新此部分。
+
+---
+
+## 联系方式
+
+| 渠道 | 账号 |
+|------|------|
+| 邮箱 | yy18612255323@163.com |
+| 微信 | yy1083124645 |
+
+欢迎联系交流合作、提问或贡献领域适配器。

@@ -26,8 +26,8 @@ class TestMedicalAdapter:
         assert KnowledgeType.A_CONCEPT in medical_adapter.knowledge_types
         assert KnowledgeType.E_COMPLICATION in medical_adapter.knowledge_types
 
-    def test_has_four_evidence_levels(self, medical_adapter: MedicalAdapter):
-        assert len(medical_adapter.evidence_levels) == 4
+    def test_has_eleven_evidence_levels(self, medical_adapter: MedicalAdapter):
+        assert len(medical_adapter.evidence_levels) == 11
 
     def test_has_five_node_meta_path(self, medical_adapter: MedicalAdapter):
         assert len(medical_adapter.meta_path_template) == 5
@@ -89,27 +89,42 @@ class TestMedicalGradeEvidence:
     def test_grades_rct(self, medical_adapter: MedicalAdapter):
         paper = {"publication_type": "Randomized Controlled Trial"}
         level = medical_adapter.grade_evidence(paper)
-        assert level == EvidenceLevel.P0_RCT
+        assert level == EvidenceLevel.L2_MULTICENTER_RCT
 
     def test_grades_guideline(self, medical_adapter: MedicalAdapter):
         paper = {"publication_type": "Clinical Practice Guideline"}
         level = medical_adapter.grade_evidence(paper)
-        assert level == EvidenceLevel.P1_CONSENSUS
+        assert level == EvidenceLevel.L4_GUIDELINE
+
+    def test_grades_consensus(self, medical_adapter: MedicalAdapter):
+        paper = {"publication_type": "Expert Consensus"}
+        level = medical_adapter.grade_evidence(paper)
+        assert level == EvidenceLevel.L7_CONSENSUS
+
+    def test_grades_meta_analysis(self, medical_adapter: MedicalAdapter):
+        paper = {"publication_type": "Meta-Analysis"}
+        level = medical_adapter.grade_evidence(paper)
+        assert level == EvidenceLevel.L1_SYSTEMATIC_REVIEW
 
     def test_grades_textbook(self, medical_adapter: MedicalAdapter):
         paper = {"publication_type": "Textbook Chapter"}
         level = medical_adapter.grade_evidence(paper)
-        assert level == EvidenceLevel.T0_TEXTBOOK
+        assert level == EvidenceLevel.L8_TEXTBOOK
 
-    def test_grades_registry_default(self, medical_adapter: MedicalAdapter):
+    def test_grades_registry(self, medical_adapter: MedicalAdapter):
         paper = {"publication_type": "Retrospective Registry"}
         level = medical_adapter.grade_evidence(paper)
-        assert level == EvidenceLevel.P2_REGISTRY
+        assert level == EvidenceLevel.L5_MULTICENTER_COHORT
+
+    def test_grades_case_report(self, medical_adapter: MedicalAdapter):
+        paper = {"publication_type": "Case Report"}
+        level = medical_adapter.grade_evidence(paper)
+        assert level == EvidenceLevel.L11_CASE_REPORT
 
     def test_grades_empty_type(self, medical_adapter: MedicalAdapter):
         paper = {}
         level = medical_adapter.grade_evidence(paper)
-        assert level == EvidenceLevel.P2_REGISTRY
+        assert level == EvidenceLevel.L6_SINGLE_CENTER_COHORT
 
 
 class TestMedicalDepthStandard:

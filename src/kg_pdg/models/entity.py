@@ -4,6 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from kg_pdg.models.evidence import EvidenceLevel, KnowledgeType
+from kg_pdg.models.source import SourceMetadata
 
 # Granularity thresholds used by Entity.needs_split().
 _MAX_LINES = 300
@@ -20,7 +21,9 @@ class Entity:
         category: Coarse category, e.g. "plaque_type", "imaging_feature",
             "clinical_trial".
         knowledge_type: Depth-dimension classification (A_CONCEPT ... E_COMPLICATION).
-        evidence_level: Evidence-dimension classification (T0_TEXTBOOK ... P2_REGISTRY).
+        evidence_level: Provenance classification (L1_SYSTEMATIC_REVIEW ... L11_CASE_REPORT).
+        source_metadata: Optional integrity metadata for trust scoring.
+        trust_score: Optional 0-100 trust score computed by TrustScorer.
         tags: Free-form tags for retrieval.
         aliases: Alternative names / synonyms.
         content: The actual knowledge content (free text).
@@ -35,6 +38,8 @@ class Entity:
     category: str
     knowledge_type: KnowledgeType
     evidence_level: EvidenceLevel
+    source_metadata: SourceMetadata | None = None
+    trust_score: float | None = None
     tags: list[str] = field(default_factory=list)
     aliases: list[str] = field(default_factory=list)
     content: str = ""

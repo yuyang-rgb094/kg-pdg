@@ -10,6 +10,7 @@ import logging
 
 from kg_pdg.adapters.base import BaseAdapter
 from kg_pdg.core.complete import Complete
+from kg_pdg.core.discovery import StructuralProbeDiscovery
 from kg_pdg.core.ontology import Ontology
 from kg_pdg.core.probe import Probe
 from kg_pdg.core.recall import Recall
@@ -75,7 +76,7 @@ class Pipeline:
                 "title": pred.get("description", "New entity"),
                 "category": pred.get("predicted_entity_type", "unknown"),
                 "knowledge_type": "A_CONCEPT",
-                "evidence_level": "P2_REGISTRY",
+                "evidence_level": "L6_SINGLE_CENTER_COHORT",
                 "content": pred.get("description", ""),
                 "sources": [],
                 "tags": [pred.get("slot", "")],
@@ -119,4 +120,52 @@ class Pipeline:
             "recall_report": recall_report,
             "completion_report": completion_report,
             "verification_report": verification_report,
+        }
+
+    def run_discovery(
+        self,
+        graph: dict,
+        consensus_ids: list[str] | None = None,
+        max_hops: int = 3,
+    ) -> dict:
+        """Auto-discover structural signals and grow the graph via the loop.
+
+        Scans the graph for structural gaps (isolated nodes, dead ends,
+        unsourced facts, unclosed citations), then runs the full 4-phase loop
+        once per detected signal. Each probe operates on the graph as updated
+        by the previous probe, so the graph grows incrementally. This is the
+        self-driving entry point of the KG Loop: no external input required.
+        """
+        discovery = StructuralProbeDiscovery(graph)
+        report = discovery.discover(
+            consensus_ids=consensus_ids, max_hops=max_hops
+        )
+        logger.info(
+            "Discovery found %d structural signals; running one loop each.",
+            report.count(),
+        )
+
+        probe_results: list[dict] = []
+        for sig in report.signals:
+            logger.info(
+                "Auto-probe [%s] %s: %s",
+                sig.signal_type,
+                sig.entity_id,
+                sig.suggested_probe,
+            )
+            result = self.run(sig.suggested_probe, graph)
+            probe_results.append(
+                {
+                    "signal_type": sig.signal_type,
+                    "entity_id": sig.entity_id,
+                    "severity": sig.severity,
+                    "suggested_probe": sig.suggested_probe,
+                    "result": result,
+                }
+            )
+
+        return {
+            "discovery_report": report,
+            "probe_results": probe_results,
+            "updated_graph": graph,
         }

@@ -24,7 +24,7 @@ def sample_graph() -> dict:
             title="TCFA",
             category="plaque_type",
             knowledge_type=KnowledgeType.A_CONCEPT,
-            evidence_level=EvidenceLevel.T0_TEXTBOOK,
+            evidence_level=EvidenceLevel.L8_TEXTBOOK,
             tags=["KG/plaque_type"],
             aliases=["TCFA", "thin-cap fibroatheroma"],
             content="TCFA is a plaque with FCT <65um. OCT can measure FCT in vivo.",
@@ -37,7 +37,7 @@ def sample_graph() -> dict:
             title="PROSPECT Trial",
             category="clinical_trial",
             knowledge_type=KnowledgeType.B_DIAGNOSIS,
-            evidence_level=EvidenceLevel.P0_RCT,
+            evidence_level=EvidenceLevel.L2_MULTICENTER_RCT,
             tags=["KG/clinical_trial"],
             aliases=["PROSPECT"],
             content="PROSPECT: 697 ACS patients, 3-vessel VH-IVUS. TCFA predicts MACE.",
@@ -200,7 +200,7 @@ class TestComplete:
             "title": "Test Entity",
             "category": "test",
             "knowledge_type": "A_CONCEPT",
-            "evidence_level": "P2_REGISTRY",
+            "evidence_level": "L6_SINGLE_CENTER_COHORT",
             "content": "Initial content.",
             "sources": [],
         }
@@ -217,7 +217,7 @@ class TestComplete:
             title="Test",
             category="test",
             knowledge_type=KnowledgeType.A_CONCEPT,
-            evidence_level=EvidenceLevel.T0_TEXTBOOK,
+            evidence_level=EvidenceLevel.L8_TEXTBOOK,
             content="Original content.",
             sources=["src1"],
         )
@@ -232,7 +232,7 @@ class TestComplete:
             title="New Trial",
             category="clinical_trial",
             knowledge_type=KnowledgeType.B_DIAGNOSIS,
-            evidence_level=EvidenceLevel.P0_RCT,
+            evidence_level=EvidenceLevel.L2_MULTICENTER_RCT,
             content="A new trial validating TCFA.",
             sources=["CT001"],  # derives from CT001
         )
@@ -249,7 +249,7 @@ class TestComplete:
             title="Test",
             category="test",
             knowledge_type=KnowledgeType.A_CONCEPT,
-            evidence_level=EvidenceLevel.P2_REGISTRY,
+            evidence_level=EvidenceLevel.L6_SINGLE_CENTER_COHORT,
             content="Content.",
             sources=["src1"],
         )
@@ -351,3 +351,46 @@ class TestPipeline:
         gap = result["gap_report"]
         assert gap.meta_path is not None
         assert gap.meta_path.modality == "oct"
+
+
+class TestPipelineDiscovery:
+    """Tests for auto-discovery: structural signals drive the 4-phase loop."""
+
+    @pytest.fixture
+    def discovery_graph(self, sample_graph: dict) -> dict:
+        """sample_graph plus an isolated entity to trigger a signal."""
+        sample_graph["entities"]["ISO001"] = Entity(
+            entity_id="ISO001",
+            title="Orphan Marker",
+            category="metric",
+            knowledge_type=KnowledgeType.E_COMPLICATION,
+            evidence_level=EvidenceLevel.L7_CONSENSUS,
+            content="A marker with no relations and no source.",
+            sources=[],
+        )
+        return sample_graph
+
+    def test_run_discovery_returns_expected_keys(
+        self, discovery_graph: dict, adapter: MedicalAdapter
+    ):
+        pipeline = Pipeline(adapter)
+        result = pipeline.run_discovery(discovery_graph, consensus_ids=["CT001"])
+        assert "discovery_report" in result
+        assert "probe_results" in result
+        assert "updated_graph" in result
+
+    def test_run_discovery_runs_one_probe_per_signal(
+        self, discovery_graph: dict, adapter: MedicalAdapter
+    ):
+        pipeline = Pipeline(adapter)
+        result = pipeline.run_discovery(discovery_graph, consensus_ids=["CT001"])
+        report = result["discovery_report"]
+        assert len(result["probe_results"]) == report.count()
+
+    def test_run_discovery_grows_graph(
+        self, discovery_graph: dict, adapter: MedicalAdapter
+    ):
+        initial = len(discovery_graph["entities"])
+        pipeline = Pipeline(adapter)
+        result = pipeline.run_discovery(discovery_graph, consensus_ids=["CT001"])
+        assert len(result["updated_graph"]["entities"]) >= initial

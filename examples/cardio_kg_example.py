@@ -31,7 +31,7 @@ def build_sample_graph() -> dict:
         title="TCFA (Thin-Cap Fibroatheroma)",
         category="plaque_type",
         knowledge_type=KnowledgeType.A_CONCEPT,
-        evidence_level=EvidenceLevel.T0_TEXTBOOK,
+        evidence_level=EvidenceLevel.L8_TEXTBOOK,
         tags=["KG/plaque_type"],
         aliases=["TCFA", "thin-cap fibroatheroma"],
         content=(
@@ -58,7 +58,7 @@ def build_sample_graph() -> dict:
         title="Calcified Plaque",
         category="plaque_type",
         knowledge_type=KnowledgeType.A_CONCEPT,
-        evidence_level=EvidenceLevel.T0_TEXTBOOK,
+        evidence_level=EvidenceLevel.L8_TEXTBOOK,
         tags=["KG/plaque_type"],
         aliases=["calcified nodule", "calcified plaque"],
         content="Calcified plaque with calcium deposits detectable by OCT as low-signal regions.",
@@ -73,7 +73,7 @@ def build_sample_graph() -> dict:
         title="PROSPECT Trial",
         category="clinical_trial",
         knowledge_type=KnowledgeType.B_DIAGNOSIS,
-        evidence_level=EvidenceLevel.P0_RCT,
+        evidence_level=EvidenceLevel.L2_MULTICENTER_RCT,
         tags=["KG/clinical_trial"],
         aliases=["PROSPECT"],
         content=(
@@ -92,7 +92,7 @@ def build_sample_graph() -> dict:
         title="CLIMA Study",
         category="clinical_trial",
         knowledge_type=KnowledgeType.B_DIAGNOSIS,
-        evidence_level=EvidenceLevel.P0_RCT,
+        evidence_level=EvidenceLevel.L2_MULTICENTER_RCT,
         tags=["KG/clinical_trial"],
         aliases=["CLIMA"],
         content=(

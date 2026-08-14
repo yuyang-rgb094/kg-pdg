@@ -21,7 +21,7 @@ def sample_entity() -> Entity:
         title="TCFA",
         category="plaque_type",
         knowledge_type=KnowledgeType.A_CONCEPT,
-        evidence_level=EvidenceLevel.T0_TEXTBOOK,
+        evidence_level=EvidenceLevel.L8_TEXTBOOK,
         tags=["KG/plaque_type"],
         aliases=["thin-cap fibroatheroma"],
         content="TCFA is a plaque with FCT <65um.\nKey evidence: PROSPECT trial.",
@@ -39,7 +39,7 @@ def oversized_entity() -> Entity:
         title="Oversized Entity",
         category="operation",
         knowledge_type=KnowledgeType.C_OPERATION,
-        evidence_level=EvidenceLevel.P1_CONSENSUS,
+        evidence_level=EvidenceLevel.L7_CONSENSUS,
         content="\n".join(f"Line {i}" for i in range(350)),
         sources=["src1"],
         created_at="2026-01-15T00:00:00",
@@ -70,10 +70,10 @@ class TestKnowledgeTypes:
 class TestEvidenceHierarchy:
     """Tests for the evidence hierarchy dimension."""
 
-    def test_four_levels(self, ontology: Ontology):
-        assert len(ontology.EVIDENCE_HIERARCHY) == 4
-        assert EvidenceLevel.T0_TEXTBOOK in ontology.EVIDENCE_HIERARCHY
-        assert EvidenceLevel.P2_REGISTRY in ontology.EVIDENCE_HIERARCHY
+    def test_eleven_levels(self, ontology: Ontology):
+        assert len(ontology.EVIDENCE_HIERARCHY) == 11
+        assert EvidenceLevel.L1_SYSTEMATIC_REVIEW in ontology.EVIDENCE_HIERARCHY
+        assert EvidenceLevel.L11_CASE_REPORT in ontology.EVIDENCE_HIERARCHY
 
 
 class TestMetaPath:
@@ -107,7 +107,7 @@ class TestEntityValidation:
             title="Empty",
             category="test",
             knowledge_type=KnowledgeType.A_CONCEPT,
-            evidence_level=EvidenceLevel.T0_TEXTBOOK,
+            evidence_level=EvidenceLevel.L8_TEXTBOOK,
             content="",
             sources=["src1", "src2"],
         )
@@ -121,7 +121,7 @@ class TestEntityValidation:
             title="Under-sourced",
             category="test",
             knowledge_type=KnowledgeType.A_CONCEPT,
-            evidence_level=EvidenceLevel.T0_TEXTBOOK,
+            evidence_level=EvidenceLevel.L8_TEXTBOOK,
             content="Some content here.",
             sources=["only_one"],
         )
@@ -145,7 +145,7 @@ class TestGranularityTriggers:
             title="Single Source",
             category="test",
             knowledge_type=KnowledgeType.A_CONCEPT,
-            evidence_level=EvidenceLevel.T0_TEXTBOOK,
+            evidence_level=EvidenceLevel.L8_TEXTBOOK,
             content="Some content.",
             sources=["only_source"],
         )

@@ -7,6 +7,11 @@ from kg_pdg.models.entity import Entity
 from kg_pdg.models.evidence import Evidence, EvidenceLevel, KnowledgeType
 from kg_pdg.models.gap import GapReport, MetaPath
 from kg_pdg.models.relation import Relation, RelationType
+from kg_pdg.models.source import (
+    RetractionStatus,
+    SourceMetadata,
+    VenueType,
+)
 
 __all__ = [
     "Entity",
@@ -17,4 +22,7 @@ __all__ = [
     "KnowledgeType",
     "GapReport",
     "MetaPath",
+    "SourceMetadata",
+    "VenueType",
+    "RetractionStatus",
 ]

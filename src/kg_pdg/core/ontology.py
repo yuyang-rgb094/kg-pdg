@@ -4,7 +4,9 @@ The four dimensions are:
 
 1. Knowledge type (depth): A_CONCEPT -> B_DIAGNOSIS -> C_OPERATION ->
    D_DECISION -> E_COMPLICATION.
-2. Evidence level: T0_TEXTBOOK, P0_RCT, P1_CONSENSUS, P2_REGISTRY.
+2. Evidence level: pure provenance taxonomy L1_SYSTEMATIC_REVIEW ->
+   L2_MULTICENTER_RCT -> ... -> L11_CASE_REPORT (quality scored separately
+   by TrustScorer).
 3. Meta-path (reasoning chain): modality -> feature -> risk_stratification
    -> intervention -> outcome.
 4. Relation type: how entities connect to each other.
@@ -65,12 +67,21 @@ class Ontology:
         },
     }
 
-    # Dimension 2: evidence hierarchy ordered from most to least foundational.
+    # Dimension 2: evidence provenance hierarchy ordered from most to least
+    # rigorous. This is a pure taxonomy (what kind of source); quality is
+    # scored separately by TrustScorer.
     EVIDENCE_HIERARCHY: list[EvidenceLevel] = [
-        EvidenceLevel.T0_TEXTBOOK,
-        EvidenceLevel.P0_RCT,
-        EvidenceLevel.P1_CONSENSUS,
-        EvidenceLevel.P2_REGISTRY,
+        EvidenceLevel.L1_SYSTEMATIC_REVIEW,
+        EvidenceLevel.L2_MULTICENTER_RCT,
+        EvidenceLevel.L3_SINGLE_CENTER_RCT,
+        EvidenceLevel.L4_GUIDELINE,
+        EvidenceLevel.L5_MULTICENTER_COHORT,
+        EvidenceLevel.L6_SINGLE_CENTER_COHORT,
+        EvidenceLevel.L7_CONSENSUS,
+        EvidenceLevel.L8_TEXTBOOK,
+        EvidenceLevel.L9_NARRATIVE_REVIEW,
+        EvidenceLevel.L10_CASE_SERIES,
+        EvidenceLevel.L11_CASE_REPORT,
     ]
 
     # Dimension 3: the 5-node meta-path template (slot names).

@@ -49,7 +49,7 @@ class Complete:
         knowledge_type = template.get("knowledge_type", KnowledgeType.A_CONCEPT)
         if isinstance(knowledge_type, str):
             knowledge_type = KnowledgeType(knowledge_type)
-        evidence_level = template.get("evidence_level", EvidenceLevel.P2_REGISTRY)
+        evidence_level = template.get("evidence_level", EvidenceLevel.L6_SINGLE_CENTER_COHORT)
         if isinstance(evidence_level, str):
             evidence_level = EvidenceLevel(evidence_level)
 
@@ -119,7 +119,10 @@ class Complete:
         for eid, ent in entities.items():
             if eid == entity.entity_id:
                 continue
-            if ent.evidence_level == EvidenceLevel.P0_RCT:
+            if ent.evidence_level in (
+                EvidenceLevel.L2_MULTICENTER_RCT,
+                EvidenceLevel.L3_SINGLE_CENTER_RCT,
+            ):
                 key = (entity.entity_id, eid, RelationType.VALIDATED_BY)
                 if key not in existing:
                     new_relations.append(
@@ -138,25 +141,35 @@ class Complete:
     def annotate_evidence(self, entity: Entity) -> Entity:
         """Annotate an entity with its evidence grade and limitations."""
         level = entity.evidence_level
-        if level == EvidenceLevel.T0_TEXTBOOK:
-            annotation = {"action": "annotate", "grade": "T0", "limitations": []}
-        elif level == EvidenceLevel.P0_RCT:
+        if level in (
+            EvidenceLevel.L8_TEXTBOOK,
+            EvidenceLevel.L1_SYSTEMATIC_REVIEW,
+        ):
+            annotation = {"action": "annotate", "grade": "L1", "limitations": []}
+        elif level in (
+            EvidenceLevel.L2_MULTICENTER_RCT,
+            EvidenceLevel.L3_SINGLE_CENTER_RCT,
+        ):
             annotation = {
                 "action": "annotate",
-                "grade": "P0",
-                "limitations": ["single-center bias"],
+                "grade": "L2",
+                "limitations": ["single-center bias"] if level ==
+                    EvidenceLevel.L3_SINGLE_CENTER_RCT else [],
             }
-        elif level == EvidenceLevel.P1_CONSENSUS:
+        elif level in (
+            EvidenceLevel.L4_GUIDELINE,
+            EvidenceLevel.L7_CONSENSUS,
+        ):
             annotation = {
                 "action": "annotate",
-                "grade": "P1",
+                "grade": "L4",
                 "limitations": ["expert opinion"],
             }
         else:
             annotation = {
                 "action": "annotate",
-                "grade": "P2",
-                "limitations": ["registry bias"],
+                "grade": "L5",
+                "limitations": ["observational bias"],
             }
         entity.evolution_chain = entity.evolution_chain + [annotation]
         entity.updated_at = datetime.now(timezone.utc).isoformat()
